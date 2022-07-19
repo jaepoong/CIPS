@@ -14,7 +14,7 @@ def convert_to_coord_format(b, h, w, device='cpu', integer_values=False):
     
     return torch.cat((x_channel, y_channel), dim=1)
 
-def convert_to_dif_coord_format(b, h, w,h_range=(-1,1),w_range=(-1,1) ,device='cpu'):
+def convert_to_dif_coord_format(b, h, w, h_range=(-1,1), w_range=(-1,1) ,device='cpu'):
     x_channel = torch.linspace(h_range[0],h_range[1], w, device=device).view(1, 1, 1, -1).repeat(b, 1, w, 1)
     y_channel = torch.linspace(w_range[0], w_range[1], h, device=device).view(1, 1, -1, 1).repeat(b, 1, 1, h)
     return torch.cat((x_channel, y_channel), dim=1)
