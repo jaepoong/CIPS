@@ -96,8 +96,8 @@ def prepare_data(data_type, path, out, n_worker, sizes, quality, chunksize):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('data_type', type=str, help='data type', choices=['images', 'videos'])
-    parser.add_argument('path', type=str, help='a path to input directiory')
+    parser.add_argument('--data_type', type=str, help='data type', choices=['images', 'videos'])
+    parser.add_argument('--path', type=str, help='a path to input directiory')
     parser.add_argument('--out', type=str, help='a path to output directory')
     parser.add_argument('--sizes', type=int, nargs='+', default=(8, 16, 32, 64, 128, 256, 512, 1024))
     parser.add_argument('--quality', type=int, help='output jpeg quality', default=85)
