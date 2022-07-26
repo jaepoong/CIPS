@@ -99,7 +99,7 @@ if __name__ == '__main__':
     parser.add_argument('--data_type', type=str, help='data type', choices=['images', 'videos'])
     parser.add_argument('--path', type=str, help='a path to input directiory')
     parser.add_argument('--out', type=str, help='a path to output directory')
-    parser.add_argument('--sizes', type=int, nargs='+', default=(8, 16, 32, 64, 128, 256, 512, 1024))
+    parser.add_argument('--sizes', type=int, nargs='+', default=( 256) # default=(8, 16, 32, 64, 128, 256, 512, 1024)
     parser.add_argument('--quality', type=int, help='output jpeg quality', default=85)
     parser.add_argument('--n_worker', type=int, help='number of worker processes', default=8)
     parser.add_argument('--chunksize', type=int, help='approximate chunksize for each worker', default=10)
