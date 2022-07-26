@@ -90,9 +90,9 @@ def mixing_noise(batch, latent_dim, prob, device):
 
 
 def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, device):
-    loader = sample_data(loader)
+    loader = sample_data(loader) # 배치사이즈 만큼생성.
 
-    pbar = range(args.iter)
+    pbar = range(args.iter) # default 1200000
 
     if get_rank() == 0:
         pbar = tqdm(pbar, initial=args.start_iter, dynamic_ncols=True, smoothing=0.01)
@@ -117,10 +117,10 @@ def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, devic
 
     sample_z = torch.randn(args.n_sample, args.latent, device=device)
 
-    for idx in pbar:
+    for idx in pbar: # 12만번 배치크기만큼 반복.
         i = idx + args.start_iter
 
-        if i > args.iter:
+        if i > args.iter: # 반복 수
             print('Done!')
 
             break
@@ -215,7 +215,7 @@ def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, devic
                 writer.add_scalar("Fake Score", fake_score_val, i)
                 writer.add_scalar("Path Length", path_length_val, i)
 
-            if i % 500 == 0:
+            if i % 500 == 0: # 500번마다 이미지 생성 및 저장.
                 with torch.no_grad():
                     g_ema.eval()
                     converted_full = convert_to_coord_format(sample_z.size(0), args.size, args.size, device,
@@ -260,7 +260,7 @@ def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, devic
                             range=(-1, 1),
                         )
 
-            if i % args.save_checkpoint_frequency == 0:
+            if i % args.save_checkpoint_frequency == 0: # 20000번마다 checkpoint 저장. FID도 저장.
                 torch.save(
                     {
                         'g': g_module.state_dict(),
@@ -286,7 +286,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('path', type=str)
+    parser.add_argument('--path', type=str)
     parser.add_argument('--output_dir', type=str)
     parser.add_argument('--out_path', type=str, default='.')
 
@@ -311,7 +311,7 @@ if __name__ == '__main__':
     parser.add_argument('--coords_size', type=int, default=256)
 
     # Generator params
-    parser.add_argument('--Generator', type=str, default='ModSIREN')
+    parser.add_argument('--Generator', type=str, default='CIPSskip')
     parser.add_argument('--coords_integer_values', action='store_true')
     parser.add_argument('--size', type=int, default=256)
     parser.add_argument('--fc_dim', type=int, default=512)
@@ -442,7 +442,7 @@ if __name__ == '__main__':
     fid_dataset.length = args.fid_samples
     loader = data.DataLoader(
         dataset,
-        batch_size=args.batch,
+        batch_size=args.batch, # 배치사이즈 고정
         sampler=data_sampler(dataset, shuffle=True, distributed=args.distributed),
         drop_last=True,
         num_workers=args.num_workers,

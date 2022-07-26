@@ -16,6 +16,7 @@ import tensor_transforms as tt
 
 class MultiScaleDataset(Dataset):
     def __init__(self, path, transform, resolution=256, to_crop=False, crop_size=64, integer_values=False):
+        # lmdb 사용
         self.env = lmdb.open(
             path,
             max_readers=32,
@@ -23,7 +24,7 @@ class MultiScaleDataset(Dataset):
             lock=False,
             readahead=False,
             meminit=False,
-        )
+        ) 
         self.crop_size = crop_size
         self.integer_values = integer_values
         self.n = resolution // crop_size
@@ -50,20 +51,20 @@ class MultiScaleDataset(Dataset):
 
         with self.env.begin(write=False) as txn:
             key = f'{str(index).zfill(7)}'.encode('utf-8')
-            img_bytes = txn.get(key)
+            img_bytes = txn.get(key) # index image byte 받음
 
-        buffer = BytesIO(img_bytes)
-        img = Image.open(buffer)
-        img = self.transform(img).unsqueeze(0)
+        buffer = BytesIO(img_bytes) 
+        img = Image.open(buffer) # index image pillow 형태로 변형
+        img = self.transform(img).unsqueeze(0) # 0번 차원 추가. (1,3,256,256)
 
         if self.to_crop:
             img = self.crop_resolution(img)
 
-        stack = torch.cat([img, self.coords], 1)
+        stack = torch.cat([img, self.coords], 1) # coord 붙이기 (1,4,256,256)
         del img
 
-        data[0] = self.crop(stack).squeeze(0)
-        stack = stack.squeeze(0)
+        data[0] = self.crop(stack).squeeze(0) #data[0] = (4,64,64)
+        stack = stack.squeeze(0) #(4,256,256)
 
         stack_strided = None
         for ls in range(self.log_size, 0, -1):
